@@ -14,10 +14,10 @@ Construir uma trama de mistério no estilo "Detetive" e utilizar **Regras de Equ
 
 Obrigatório: equipes de 4 estudantes.
 
-* [Nome Completo Integrante 1]
-* [Nome Completo Integrante 2]
-* [Nome Completo Integrante 3]
-* [Nome Completo Integrante 4]
+* Eduardo Rodrigues
+* Elis Do Carmo Faiolla
+* Matias Zuniga
+* Ricardo Hey
 
 ## 4. Entregáveis
 
