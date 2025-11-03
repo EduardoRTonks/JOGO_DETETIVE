@@ -1,8 +1,7 @@
 import random
 import time
-import json # <--- NOVO: Importa a biblioteca JSON
+import json
 
-# --- Constantes do Jogo (Sem mudanças) ---
 PERSONAGENS = {
     'Silas Stone': 'Corporativo, frio, tinha uma cópia ilegal da Chave Ômega. A corporação ganha com o seguro da estação.',
     'Engenheira Jade Jenkins': 'Prodígio técnica. Ignorada pela Comandante após avisar sobre "anomalias" de energia.',
@@ -41,25 +40,24 @@ ITEM_LOCAIS = {
     'Vírus de Corrupção': 'Laboratório de Biociência'
 }
 LOCAL_ACESSO = {
-    'Engenharia': ['Engenheira Jade Jenkins', 'Cmandante Victoria Volkova'],
+    'Engenharia': ['Engenheira Jade Jenkins', 'Comandante Victoria Volkova'],
     'Compartimento de Carga': ['Chefe Kaelen Knight', 'Piloto Paxton Price'],
     'Ala Médica': ['Dr. Elias Erwin', 'Dr. Alistair Armstrong'],
     'Laboratório de Biociência': ['Dr. Alistair Armstrong', 'Engenheira Jade Jenkins'],
-    'Ponte de Comando': ['Cmandante Victoria Volkova', 'Piloto Paxton Price', 'Silas Stone']
+    'Ponte de Comando': ['Comandante Victoria Volkova', 'Piloto Paxton Price', 'Silas Stone']
 }
 ALIBIS_FIXOS = {
     'Silas Stone': 'estava em uma chamada corporativa na Ponte de Comando, monitorado por logs externos.',
     'Engenheira Jade Jenkins': 'estava recalibrando sensores no Observatório, longe de todos os locais de itens.',
     'Piloto Paxton Price': 'estava confinado em seus aposentos (perto da Ponte) após sua suspensão.',
-    'Cmandante Victoria Volkova': 'estava na Engenharia oposta ao seu acesso à Ponte, verificando os danos da IA.',
+    'Comandante Victoria Volkova': 'estava na Engenharia oposta ao seu acesso à Ponte, verificando os danos da IA.',
     'Dr. Alistair Armstrong': 'estava trancado no Laboratório de Biociência analisando amostras contaminadas.',
     'Dr. Elias Erwin': 'estava na Ala Médica tratando o Chefe de Segurança sedado.',
     'Chefe Kaelen Knight': 'foi encontrado sedado e incapacitado perto do Compartimento de Carga.'
 }
-ARQUIVO_PONTUACOES = 'pontuacoes.json' # <--- NOVO: Nome do arquivo de scores
+ARQUIVO_PONTUACOES = 'pontuacoes.json' 
 
 
-# --- Funções de Persistência de Dados (NOVAS) ---
 
 def carregar_pontuacoes():
     """Carrega as pontuações do arquivo JSON."""
@@ -73,8 +71,7 @@ def carregar_pontuacoes():
 def salvar_pontuacoes(nome, pontos):
     """Salva a nova pontuação no arquivo JSON."""
     if pontos <= 0: # Não salva pontuações de derrota
-        print("\nPontuação de 0 não registrada no placar.")
-        return
+        return f"Pontuação de 0 não registrada no placar."
 
     pontuacoes = carregar_pontuacoes()
     pontuacoes.append({'nome': nome, 'pontos': pontos})
@@ -82,70 +79,70 @@ def salvar_pontuacoes(nome, pontos):
     try:
         with open(ARQUIVO_PONTUACOES, 'w') as f:
             json.dump(pontuacoes, f, indent=4)
-        print(f"Pontuação de {pontos} registrada para {nome}!")
+        return f"Pontuação de {pontos} registrada para {nome}!"
     except IOError as e:
-        print(f"Erro ao salvar pontuação: {e}")
+        return f"Erro ao salvar pontuação: {e}"
 
 def mostrar_pontuacoes():
     """Exibe o placar dos 10 melhores jogadores."""
     pontuacoes = carregar_pontuacoes()
     
     if not pontuacoes:
-        print("\nNenhuma pontuação registrada ainda.")
-        return
+        return "Nenhuma pontuação registrada ainda."
 
     # Ordena as pontuações da maior para a menor
     pontuacoes_ordenadas = sorted(pontuacoes, key=lambda p: p['pontos'], reverse=True)
     
-    print("\n" + "=" * 30)
-    print("       PLACAR DE LÍDERES")
-    print("=" * 30)
+    result = "=" * 30 + "\n"
+    result += "       PLACAR DE LÍDERES\n"
+    result += "=" * 30 + "\n"
     
     # Mostra apenas os 10 primeiros
     for i, score in enumerate(pontuacoes_ordenadas[:10]):
-        print(f"{i+1: >2}. {score['nome']: <20} - {score['pontos']} pontos")
-    print("=" * 30)
-
-# --- Funções de Apresentação do Jogo ---
+        result += f"{i+1: >2}. {score['nome']: <20} - {score['pontos']} pontos\n"
+    result += "=" * 30
+    
+    return result
 
 def apresentar_contexto():
-    # Baseado nos slides "Purple and Yellow Retro Pixel..."
-    print("=" * 60)
-    print("       SABOTAGEM NA ARES-7") # 
-    print("     O PROBLEMA: AR E SILÊNCIO") # 
-    print("=" * 60 + "\n")
-    print("A ARES-7, uma estação de pesquisa em órbita de Marte, mergulha no caos.") # 
-    print(f"O Sistema de Suporte de Vida foi sabotado.") # 
-    print(f"A tripulação tem menos de 48 horas de oxigênio.") # 
-    print("\nPara piorar, o único transmissor de longo alcance foi roubado")
-    print("do Compartimento de Carga, cortando toda a comunicação com a Terra.") # 
-    print("\nO sabotador usou um vírus que corrompeu os logs de câmera da")
-    print("IA (A.T.H.E.N.A.) nos locais-chave.") # 
-    print("\nA única esperança da tripulação é usar a lógica para conectar os fatos")
-    print("restantes e descobrir o culpado antes que o tempo se esgote.") # 
+    """Retorna o texto do contexto em vez de imprimir"""
+    context = "=" * 60 + "\n"
+    context += "       SABOTAGEM NA ARES-7\n"
+    context += "     O PROBLEMA: AR E SILÊNCIO\n"
+    context += "=" * 60 + "\n\n"
+    context += "A ARES-7, uma estação de pesquisa em órbita de Marte, mergulha no caos.\n"
+    context += "O Sistema de Suporte de Vida foi sabotado.\n"
+    context += "A tripulação tem menos de 48 horas de oxigênio.\n\n"
+    context += "Para piorar, o único transmissor de longo alcance foi roubado\n"
+    context += "do Compartimento de Carga, cortando toda a comunicação com a Terra.\n\n"
+    context += "O sabotador usou um vírus que corrompeu os logs de câmera da\n"
+    context += "IA (A.T.H.E.N.A.) nos locais-chave.\n\n"
+    context += "A única esperança da tripulação é usar a lógica para conectar os fatos\n"
+    context += "restantes e descobrir o culpado antes que o tempo se esgote."
     
-    input("\n\nPressione ENTER para conhecer os tripulantes...\n\n")
+    return context
 
 def apresentar_personagens():
-    print("\n" + "=" * 60)
-    print("                   TRIPULANTES")
-    print("=" * 60 + "\n")
+    """Retorna o texto dos personagens em vez de imprimir"""
+    result = "=" * 60 + "\n"
+    result += "                   TRIPULANTES\n"
+    result += "=" * 60 + "\n\n"
     for nome, descricao in PERSONAGENS.items():
-        print(f" - {nome}: {descricao}")
-    input("\n\nPressione ENTER para ver as Regras de Dedução...\n\n")
+        result += f" - {nome}: {descricao}\n"
+    return result
 
 def apresentar_regras():
-    print("\n" + "=" * 60)
-    print("                         REGRAS")
-    print("=" * 60)
-    print(f"Objetivo: Descobrir o sabotador antes que o tempo ({TEMPO_MAX_SEGUNDOS // 60} minutos) se esgote.")
-    print("Pontuação: Você começa com 1000 pontos. Pedir pistas custa tempo E pontos.")
-    print("Consultar Pistas: Esta ação gasta tempo, mas fornece um fato chave para ajudar a encontrar o culpado.")
-    print("Arriscar o Culpado: Faça sua acusação final. Acertar salva a tripulação, errar significa fracasso imediato.")
-    print("\nUse a lógica! Sua pontuação final dependerá de sua eficiência.")
-    input("\n\nPressione ENTER para INICIAR A PARTIDA...\n\n")
+    """Retorna o texto das regras em vez de imprimir"""
+    result = "=" * 60 + "\n"
+    result += "                         REGRAS\n"
+    result += "=" * 60 + "\n"
+    result += f"Objetivo: Descobrir o sabotador antes que o tempo ({TEMPO_MAX_SEGUNDOS // 60} minutos) se esgote.\n"
+    result += "Pontuação: Você começa com 1000 pontos. Pedir pistas custa tempo E pontos.\n"
+    result += "Consultar Pistas: Esta ação gasta tempo, mas fornece um fato chave para ajudar a encontrar o culpado.\n"
+    result += "Arriscar o Culpado: Faça sua acusação final. Acertar salva a tripulação, errar significa fracasso imediato.\n\n"
+    result += "Use a lógica! Sua pontuação final dependerá de sua eficiência."
+    return result
 
-# --- Funções de Lógica do Jogo ---
 
 def configurar_partida():
     """Configura a cadeia lógica (Culpado -> Local -> Item) e gera as pistas."""
@@ -188,66 +185,54 @@ def configurar_partida():
     random.shuffle(pistas_dinamicas)
     return culpado_real, local_crime, item_crime, pistas_dinamicas
 
-
 def mostrar_tempo_restante(tempo_restante_segundos, pontuacao_atual):
     minutos = int(tempo_restante_segundos // 60)
     segundos = int(tempo_restante_segundos % 60)
-    print(f"\n[STATUS] Pontuação: {pontuacao_atual} | Tempo Restante: {minutos:02}:{segundos:02}")
+    result = f"[STATUS] Pontuação: {pontuacao_atual} | Tempo Restante: {minutos:02}:{segundos:02}"
     if tempo_restante_segundos <= 30:
-        print(f"[AVISO CRÍTICO] NÍVEIS DE OXIGÊNIO CRÍTICOS! ({minutos:02}:{segundos:02})")
-    time.sleep(1) 
-
+        result += f"\n[AVISO CRÍTICO] NÍVEIS DE OXIGÊNIO CRÍTICOS! ({minutos:02}:{segundos:02})"
+    return result
 
 def consultar_pistas(pistas_da_partida):
     if not pistas_da_partida:
-        print("\n --- Todas as pistas disponíveis para esta partida já foram reveladas!")
-        return 0, 0, pistas_da_partida
+        return 0, 0, pistas_da_partida, "Todas as pistas disponíveis para esta partida já foram reveladas!"
     
     dica = pistas_da_partida.pop() 
     tempo_gasto = random.randint(5, 10)
     custo_pontos = tempo_gasto * 10 
     
-    print(f"\n[PISTA RECEBIDA] {dica}")
-    print(f"--- {tempo_gasto}s gastos | {custo_pontos} pontos perdidos ---")
+    clue_text = f"{dica}"
     
-    return tempo_gasto, custo_pontos, pistas_da_partida
+    return tempo_gasto, custo_pontos, pistas_da_partida, clue_text
 
 def arriscar_culpado(culpado_escolhido, culpado_real, pontuacao_final, tempo_restante):
-    """
-    Verifica a acusação final.
-    Retorna (True, pontuacao_final) se o jogo acabou (vitória ou derrota).
-    """
-    print(f"\n--- ACUSAÇÃO FINAL: {culpado_escolhido} ---")
-    time.sleep(2)
-
     if culpado_escolhido == culpado_real:
         bonus_tempo = int(tempo_restante)
         pontuacao_total = pontuacao_final + bonus_tempo
         
-        print("\n" + "=" * 60)
-        print(f"       SUCESSO! O CULPADO É {culpado_real}!")
-        print("Você usou a lógica e salvou a tripulação da ARES-7.")
-        print("-" * 60)
-        print(f"Pontuação Base: {pontuacao_final}")
-        print(f"Bônus de Tempo: {bonus_tempo}")
-        print(f"PONTUAÇÃO FINAL: {pontuacao_total}")
-        print("=" * 60)
-        return True, pontuacao_total # <--- MUDANÇA: Retorna (Acabou, Pontos)
+        result = "=" * 60 + "\n"
+        result += f"       SUCESSO! O CULPADO É {culpado_real}!\n"
+        result += "Você usou a lógica e salvou a tripulação da ARES-7.\n"
+        result += "-" * 60 + "\n"
+        result += f"Pontuação Base: {pontuacao_final}\n"
+        result += f"Bônus de Tempo: {bonus_tempo}\n"
+        result += f"PONTUAÇÃO FINAL: {pontuacao_total}\n"
+        result += "=" * 60
+        
+        return True, pontuacao_total, result
     else:
-        print("\n" + "=" * 60)
-        print(f"       FRACASSO. {culpado_escolhido} ERA INOCENTE.")
-        print("Você errou. O oxigênio acaba antes que o verdadeiro sabotador possa ser detido.")
-        print(f"O culpado real era {culpado_real}.")
-        print("-" * 60)
-        print("PONTUAÇÃO FINAL: 0")
-        print("=" * 60)
-        return True, 0 # <--- MUDANÇA: Retorna (Acabou, 0 Pontos)
+        result = "=" * 60 + "\n"
+        result += f"       FRACASSO. {culpado_escolhido} ERA INOCENTE.\n"
+        result += "Você errou. O oxigênio acaba antes que o verdadeiro sabotador possa ser detido.\n"
+        result += f"O culpado real era {culpado_real}.\n"
+        result += "-" * 60 + "\n"
+        result += "PONTUAÇÃO FINAL: 0\n"
+        result += "=" * 60
+        
+        return True, 0, result
 
-# --- Função Principal (Loop do Jogo) ---
 
-def iniciar_jogo(nome_jogador): # <--- MUDANÇA: Aceita o nome do jogador
-    """Roda o loop principal do jogo e retorna a pontuação final."""
-    
+def iniciar_jogo(nome_jogador): 
     PONTUACAO_INICIAL = 1000
     pontuacao_atual = PONTUACAO_INICIAL
     
@@ -258,12 +243,11 @@ def iniciar_jogo(nome_jogador): # <--- MUDANÇA: Aceita o nome do jogador
     culpado_real, local_crime_real, item_crime_real, pistas_da_partida = configurar_partida()
     
     jogo_acabou = False
-    pontuacao_final_da_partida = 0 # <--- MUDANÇA: Armazena a pontuação final
+    pontuacao_final_da_partida = 0
     
     tempo_inicio = time.time()
     tempo_limite = tempo_inicio + TEMPO_MAX_SEGUNDOS
     
-    # <--- MUDANÇA: Mensagem de boas-vindas personalizada
     print(f"\nBoa sorte, Detetive {nome_jogador}!")
     print(f"Iniciando investigação... O crime principal está ligado à área '{local_crime_real}' e ao item '{item_crime_real}'.")
     print(f"Restam {len(pistas_da_partida)} pistas para analisar.")
@@ -284,7 +268,9 @@ def iniciar_jogo(nome_jogador): # <--- MUDANÇA: Aceita o nome do jogador
         escolha = input("Sua escolha (1 ou 2): ")
         
         if escolha == '1':
-            tempo_gasto, custo_pontos, pistas_da_partida = consultar_pistas(pistas_da_partida)
+            tempo_gasto, custo_pontos, pistas_da_partida, clue_text = consultar_pistas(pistas_da_partida)
+            print(f"\n[PISTA RECEBIDA] {clue_text}")
+            print(f"--- {tempo_gasto}s gastos | {custo_pontos} pontos perdidos ---")
             tempo_limite -= tempo_gasto 
             pontuacao_atual -= custo_pontos
             if pontuacao_atual < 0:
@@ -301,8 +287,10 @@ def iniciar_jogo(nome_jogador): # <--- MUDANÇA: Aceita o nome do jogador
                 culpado_escolhido = suspeitos_lista[indice_culpado]
                 
                 tempo_restante_final = tempo_limite - time.time()
-                # <--- MUDANÇA: Captura os dois valores de retorno
-                jogo_acabou, pontuacao_final_da_partida = arriscar_culpado(culpado_escolhido, culpado_real, pontuacao_atual, tempo_restante_final)
+                jogo_acabou, pontuacao_final_da_partida, result_text = arriscar_culpado(culpado_escolhido, culpado_real, pontuacao_atual, tempo_restante_final)
+                print(f"\n--- ACUSAÇÃO FINAL: {culpado_escolhido} ---")
+                time.sleep(2)
+                print(result_text)
                 
             except (ValueError, IndexError):
                 print("Escolha inválida. Tente novamente.")
@@ -311,9 +299,8 @@ def iniciar_jogo(nome_jogador): # <--- MUDANÇA: Aceita o nome do jogador
             print("Opção inválida. Tente novamente.")
             
         if time.time() >= tempo_limite and not jogo_acabou:
-            jogo_acabou = True # Força o fim do loop
+            jogo_acabou = True
             
-    # Mensagem de derrota por tempo esgotado
     if not pontuacao_final_da_partida and tempo_restante <= 0:
         print("\n" + "=" * 60)
         print("       TEMPO ESGOTADO - FRACASSO NA MISSÃO! ")
@@ -322,15 +309,15 @@ def iniciar_jogo(nome_jogador): # <--- MUDANÇA: Aceita o nome do jogador
         print("-" * 60)
         print("PONTUAÇÃO FINAL: 0")
         print("=" * 60)
-        pontuacao_final_da_partida = 0 # Garante que a pontuação seja 0
+        pontuacao_final_da_partida = 0
     
-    return pontuacao_final_da_partida # <--- MUDANÇA: Retorna a pontuação para o menu
+    return pontuacao_final_da_partida
 
 # --- Menu Principal e Execução ---
 
 if __name__ == "__main__":
     
-    while True: # <--- NOVO: Loop do Menu Principal
+    while True:
         print("\n" + "=" * 40)
         print("   SABOTAGEM NA ARES-7: AR E SILÊNCIO")
         print("=" * 40)
@@ -341,25 +328,21 @@ if __name__ == "__main__":
         escolha_menu = input("Escolha uma opção (1-3): ")
         
         if escolha_menu == '1':
-            # Pede o nome e inicia o jogo
             nome_jogador = input("\nDigite seu nome de Detetive: ")
-            if not nome_jogador: # Garante que o nome não seja vazio
+            if not nome_jogador:
                 nome_jogador = "Detetive Anônimo"
                 
             pontuacao_final = iniciar_jogo(nome_jogador)
             
-            # Salva a pontuação
             salvar_pontuacoes(nome_jogador, pontuacao_final)
             
             input("\n\nPressione ENTER para voltar ao Menu Principal...")
             
         elif escolha_menu == '2':
-            # Mostra o placar
-            mostrar_pontuacoes()
+            print(mostrar_pontuacoes())
             input("\n\nPressione ENTER para voltar ao Menu Principal...")
             
         elif escolha_menu == '3':
-            # Sai do jogo
             print("\nSaindo da ARES-7... Obrigado por jogar!")
             break
             
